@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-light: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --shadow-medium: 0 15px 35px rgba(31, 38, 135, 0.2);
+            --shadow-heavy: 0 25px 50px rgba(31, 38, 135, 0.25);
+
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --text-light: rgba(255, 255, 255, 0.9);
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 85%, rgba(120, 119, 198, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(255, 119, 198, 0.12) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .project-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 4rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .project-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .project-header h1 {
+            font-size: 3.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .project-header p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+            margin: 3rem 0;
+        }
+
+        .chart-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .metric-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 2s ease-in-out;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .project-content {
+                padding: 2.5rem;
+                margin: 1rem;
+            }
+
+            .project-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="project-content">
+        <a href="index.html" class="back-button">← Voltar ao Menu</a>
+        
+        <div class="project-header">
+            <h1>📊 Dashboard Analytics</h1>
+            <p>Painel de controle com gráficos interativos e métricas em tempo real</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-number" id="users">1,234</div>
+                <div class="stat-label">Usuários Ativos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-number" id="revenue">R$ 45,678</div>
+                <div class="stat-label">Receita Mensal</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-number" id="conversion">12.5%</div>
+                <div class="stat-label">Taxa de Conversão</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-number" id="performance">98.2%</div>
+                <div class="stat-label">Performance</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 class="chart-title">Gráfico de Vendas - Últimos 6 Meses</h3>
+            <div class="chart-placeholder">
+                📊 Gráfico interativo seria renderizado aqui
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: var(--success-gradient);">📱</div>
+                    <div class="metric-title">Tráfego Mobile</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="background: var(--success-gradient); width: 75%;" id="mobile-progress"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Mobile</span>
+                    <span>75%</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: var(--warning-gradient);">💻</div>
+                    <div class="metric-title">Tráfego Desktop</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="background: var(--warning-gradient); width: 60%;" id="desktop-progress"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Desktop</span>
+                    <span>60%</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: var(--accent-gradient);">🌐</div>
+                    <div class="metric-title">Sessões Orgânicas</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="background: var(--accent-gradient); width: 85%;" id="organic-progress"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Orgânico</span>
+                    <span>85%</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <div class="metric-icon" style="background: var(--secondary-gradient);">🎯</div>
+                    <div class="metric-title">Taxa de Rejeição</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="background: var(--secondary-gradient); width: 25%;" id="bounce-progress"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Rejeição</span>
+                    <span>25%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Animação dos números
+        function animateNumber(elementId, targetValue, suffix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                let currentValue;
+                if (typeof targetValue === 'string' && targetValue.includes('R$')) {
+                    const numericValue = parseInt(targetValue.replace(/[^\d]/g, ''));
+                    currentValue = Math.floor(progress * numericValue);
+                    element.textContent = `R$ ${currentValue.toLocaleString()}`;
+                } else if (typeof targetValue === 'string' && targetValue.includes('%')) {
+                    const numericValue = parseFloat(targetValue.replace('%', ''));
+                    currentValue = (progress * numericValue).toFixed(1);
+                    element.textContent = `${currentValue}%`;
+                } else {
+                    currentValue = Math.floor(progress * parseInt(targetValue.replace(/[^\d]/g, '')));
+                    element.textContent = currentValue.toLocaleString() + suffix;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        }
+
+        // Animação das barras de progresso
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.width = bar.style.width;
+                }, index * 200);
+            });
+        }
+
+        // Inicializar animações quando a página carregar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                animateNumber('users', '1234');
+                animateNumber('revenue', 'R$ 45,678');
+                animateNumber('conversion', '12.5%');
+                animateNumber('performance', '98.2%');
+                animateProgressBars();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

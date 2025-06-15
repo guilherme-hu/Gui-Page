@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Áudio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-light: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --shadow-medium: 0 15px 35px rgba(31, 38, 135, 0.2);
+            --shadow-heavy: 0 25px 50px rgba(31, 38, 135, 0.25);
+
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --text-light: rgba(255, 255, 255, 0.9);
+            --text-muted: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 85%, rgba(120, 119, 198, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 15%, rgba(255, 119, 198, 0.12) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .project-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 4rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--glass-border);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .project-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .project-header h1 {
+            font-size: 3.5rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .project-header p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .audio-player {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            margin: 3rem 0;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .audio-player:hover {
+            box-shadow: var(--shadow-medium);
+        }
+
+        .player-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .player-info p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            background: var(--warning-gradient);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--warning-gradient);
+            width: 30%;
+            transition: width 0.1s ease;
+            border-radius: 4px;
+        }
+
+        .time {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .audio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .audio-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-light);
+        }
+
+        .audio-item:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .audio-icon {
+            font-size: 2.5rem;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--warning-gradient);
+            border-radius: 20px;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .audio-info {
+            flex: 1;
+        }
+
+        .audio-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.8rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .audio-info p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .play-btn {
+            background: var(--accent-gradient);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-medium);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.15);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .project-content {
+                padding: 2.5rem;
+                margin: 1rem;
+            }
+
+            .project-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .audio-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="project-content">
+        <a href="index.html" class="back-button">← Voltar ao Menu</a>
+        
+        <div class="project-header">
+            <h1>🎵 Sistema de Áudio</h1>
+            <p>Plataforma completa para reprodução e gerenciamento de arquivos de áudio</p>
+        </div>
+        
+        <div class="project-details">
+            <h2>Player de Demonstração</h2>
+            <div class="audio-player">
+                <div class="player-info">
+                    <h4>Exemplo de Áudio</h4>
+                    <p>Demonstração do player personalizado</p>
+                </div>
+                <div class="player-controls">
+                    <button class="control-btn" onclick="togglePlay()">▶️</button>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                    <span class="time">2:30 / 4:15</span>
+                </div>
+            </div>
+            
+            <h3>Lista de Áudios</h3>
+            <div class="audio-list">
+                <div class="audio-item">
+                    <div class="audio-icon">🎙️</div>
+                    <div class="audio-info">
+                        <h4>Podcast Episódio 1</h4>
+                        <p>Discussão sobre tecnologia - 25:30</p>
+                    </div>
+                    <button class="play-btn" onclick="playAudio(1)">▶️</button>
+                </div>
+                <div class="audio-item">
+                    <div class="audio-icon">🎵</div>
+                    <div class="audio-info">
+                        <h4>Música Instrumental</h4>
+                        <p>Composição original - 4:15</p>
+                    </div>
+                    <button class="play-btn" onclick="playAudio(2)">▶️</button>
+                </div>
+                <div class="audio-item">
+                    <div class="audio-icon">📻</div>
+                    <div class="audio-info">
+                        <h4>Entrevista Técnica</h4>
+                        <p>Conversa sobre desenvolvimento - 18:45</p>
+                    </div>
+                    <button class="play-btn" onclick="playAudio(3)">▶️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isPlaying = false;
+        let currentProgress = 30;
+
+        function togglePlay() {
+            const btn = document.querySelector('.control-btn');
+            const progress = document.getElementById('progress');
+            
+            if (isPlaying) {
+                btn.textContent = '▶️';
+                isPlaying = false;
+            } else {
+                btn.textContent = '⏸️';
+                isPlaying = true;
+                // Simular progresso
+                simulateProgress();
+            }
+        }
+
+        function simulateProgress() {
+            if (isPlaying && currentProgress < 100) {
+                currentProgress += 1;
+                document.getElementById('progress').style.width = currentProgress + '%';
+                setTimeout(simulateProgress, 100);
+            }
+        }
+
+        function playAudio(id) {
+            alert(`Reproduzindo áudio ${id}...`);
+        }
+    </script>
+</body>
+</html> 
