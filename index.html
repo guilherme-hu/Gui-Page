@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Minha Empresa | Soluções Inovadoras</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+    <style>
+        /* --- Variáveis de Cor para Fácil Customização --- */
+        :root {
+            --cor-primaria: #007BFF; /* Azul */
+            --cor-primaria-hover: #0056b3;
+            --cor-fundo-claro: #f8f9fa;
+            --cor-fundo-escuro: #343a40;
+            --cor-texto: #212529;
+            --cor-texto-claro: #ffffff;
+            --cor-borda: #dee2e6;
+        }
+
+        /* --- Estilos Gerais e Rolagem Suave --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--cor-texto);
+            line-height: 1.6;
+        }
+
+        /* --- Barra de Navegação (Menu) --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--cor-texto-claro);
+            padding: 1rem 5%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cor-primaria);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--cor-texto);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--cor-primaria);
+        }
+
+        /* --- Botão "Hamburger" para Mobile --- */
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--cor-texto);
+        }
+
+        /* --- Seção de Início (Hero) --- */
+        #inicio {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: var(--cor-texto-claro);
+            padding: 0 2rem;
+        }
+
+        #inicio h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        #inicio p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            background-color: var(--cor-primaria);
+            color: var(--cor-texto-claro);
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--cor-primaria-hover);
+        }
+
+        /* --- Estilo Padrão para Seções --- */
+        .secao {
+            padding: 6rem 5%;
+            min-height: 60vh;
+        }
+
+        .secao:nth-child(even) {
+            background-color: var(--cor-fundo-claro);
+        }
+        
+        .secao h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        /* Linha decorativa abaixo do título da seção */
+        .secao h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--cor-primaria);
+            margin: 0.5rem auto 0;
+            border-radius: 2px;
+        }
+        
+        .conteudo-secao {
+            max-width: 960px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* --- Rodapé --- */
+        footer {
+            background-color: var(--cor-fundo-escuro);
+            color: var(--cor-texto-claro);
+            text-align: center;
+            padding: 2rem 5%;
+        }
+
+        /* --- Estilos Responsivos --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--cor-texto-claro);
+                padding: 1rem 0;
+                text-align: center;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                padding: 0.8rem 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            #inicio h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="#inicio" class="logo">MeuSite</a>
+        
+        <ul class="nav-links">
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#servicos">Serviços</a></li>
+            <li><a href="#contato">Contato</a></li>
+        </ul>
+        
+        <button class="menu-toggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </nav>
+
+    <header id="inicio">
+        <h1>Transformando Ideias em Realidade Digital</h1>
+        <p>Criamos soluções web personalizadas que impulsionam o seu negócio para o futuro.</p>
+        <a href="#servicos" class="cta-button">Conheça Nossos Serviços</a>
+    </header>
+
+    <main>
+        <section id="sobre" class="secao">
+            <h2>Sobre Nós</h2>
+            <div class="conteudo-secao">
+                <p>Somos uma equipe de desenvolvedores, designers e estrategistas apaixonados por criar experiências digitais incríveis. Com mais de 10 anos de mercado, nosso foco é entender suas necessidades para entregar resultados que superem as expectativas. Acreditamos que um bom design e uma tecnologia robusta são a chave para o sucesso online.</p>
+            </div>
+        </section>
+
+        <section id="servicos" class="secao">
+            <h2>Nossos Serviços</h2>
+            <div class="conteudo-secao">
+                <p>Oferecemos uma gama completa de serviços para atender às suas necessidades digitais, incluindo Desenvolvimento de Sites e E-commerce, Design de UI/UX, Otimização para Motores de Busca (SEO) e Consultoria em Tecnologia. Cada projeto é tratado com atenção aos detalhes para garantir a máxima qualidade.</p>
+            </div>
+        </section>
+
+        <section id="contato" class="secao">
+            <h2>Contato</h2>
+            <div class="conteudo-secao">
+                 <p>Pronto para começar seu próximo projeto? Entre em contato conosco!</p>
+                <p>Email: contato@meusite.com</p>
+                <p>Telefone: (21) 99999-8888</p>
+                <br>
+                <a href="mailto:contato@meusite.com" class="cta-button">Envie um Email</a>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 MeuSite. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
+
+</body>
+</html>
